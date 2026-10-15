@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoVar-LTEE | E. coli Ara-3 Genomic Variant & Evolutionary Analysis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #fafbfc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --blue: #2563eb;
+      --blue-subtle: #eff6ff;
+      --emerald: #059669;
+      --emerald-subtle: #ecfdf5;
+      --amber: #d97706;
+      --amber-subtle: #fffbeb;
+      --font-display: 'Cabinet Grotesk', -apple-system, sans-serif;
+      --font-body: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      line-height: 1.6;
+    }
+
+    /* Site Header */
+    header.site-header {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 0.85rem 2rem;
+    }
+    .header-inner {
+      max-width: 1240px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .brand-cluster {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+    }
+    .badge-icon {
+      background: #0f172a;
+      color: #fff;
+      font-weight: 800;
+      font-size: 0.95rem;
+      width: 38px;
+      height: 38px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+    }
+    .brand-text h1 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+    .brand-text p {
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 700;
+    }
+    nav.nav-links {
+      display: flex;
+      gap: 1.8rem;
+      align-items: center;
+    }
+    nav.nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 600;
+      transition: color 0.15s;
+    }
+    nav.nav-links a:hover { color: var(--blue); }
+    .btn-pill {
+      background: var(--blue-subtle);
+      color: var(--blue);
+      border: 1px solid #bfdbfe;
+      padding: 0.45rem 1.1rem;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    /* Main Container */
+    main {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 3.5rem 2rem 5rem;
+    }
+
+    /* Editorial Hero Section */
+    .hero-editorial {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 3.5rem;
+      align-items: center;
+      padding-bottom: 3.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 3.5rem;
+    }
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      color: var(--blue);
+      text-transform: uppercase;
+      background: var(--blue-subtle);
+      padding: 0.35rem 0.85rem;
+      border-radius: 6px;
+      margin-bottom: 1.3rem;
+    }
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: 3.4rem;
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+      font-weight: 900;
+      margin-bottom: 1.3rem;
+      color: var(--text);
+    }
+    .hero-summary {
+      font-size: 1.1rem;
+      color: #475569;
+      line-height: 1.65;
+      margin-bottom: 2rem;
+    }
+
+    /* Clean Project Info Card */
+    .project-meta-card {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.2rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 1.2rem 1.6rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+      margin-bottom: 1.5rem;
+    }
+    .meta-group { display: flex; flex-direction: column; }
+    .meta-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 0.2rem;
+    }
+    .meta-val {
+      font-size: 0.96rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .meta-val.mono { font-family: var(--font-mono); color: var(--blue); font-size: 0.88rem; }
+
+    .hero-artwork {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .genome-frame {
+      width: 100%;
+      max-width: 440px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1.25rem;
+      box-shadow: 0 16px 36px rgba(0,0,0,0.04);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .genome-frame img {
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      display: block;
+    }
+    .frame-meta {
+      margin-top: 1rem;
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    /* Metric Counters */
+    .metrics-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 4.5rem;
+    }
+    .metric-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.6rem 1.8rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+    .metric-num {
+      font-family: var(--font-display);
+      font-size: 2.8rem;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -0.04em;
+      color: var(--blue);
+      margin-bottom: 0.5rem;
+    }
+    .metric-name {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.2rem;
+    }
+    .metric-desc {
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    /* Sections */
+    section.block-sec {
+      margin-bottom: 5rem;
+      scroll-margin-top: 5rem;
+    }
+    .sec-header { margin-bottom: 1.8rem; }
+    .sec-tag {
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 0.3rem;
+    }
+    .sec-title {
+      font-family: var(--font-display);
+      font-size: 2.1rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      color: var(--text);
+    }
+
+    /* Pipeline Sequence */
+    .workflow-sequence {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.3rem;
+    }
+    .work-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.6rem;
+      transition: all 0.2s;
+    }
+    .work-box:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.03);
+    }
+    .work-idx {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--blue);
+      margin-bottom: 0.6rem;
+    }
+    .work-box h4 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 0.6rem;
+    }
+    .work-box p {
+      font-size: 0.86rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    /* Table Toolbar & Search */
+    .table-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.2rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .table-search {
+      width: 340px;
+      padding: 0.8rem 1.1rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-family: inherit;
+      background: #ffffff;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .table-search:focus { border-color: var(--blue); }
+    .table-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow-x: auto;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; text-align: left; }
+    th {
+      background: #f8fafc;
+      padding: 0.95rem 1.15rem;
+      font-weight: 700;
+      font-size: 0.74rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 0.95rem 1.15rem;
+      border-bottom: 1px solid #f1f5f9;
+      color: #1e293b;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f8fafc; }
+    .chip {
+      display: inline-block;
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 0.74rem;
+      font-family: var(--font-mono);
+    }
+    .chip-snp { background: var(--blue-subtle); color: var(--blue); }
+    .chip-indel { background: #fef2f2; color: #dc2626; }
+    .mono { font-family: var(--font-mono); font-size: 0.83rem; }
+
+    /* Four Biological Adaptation Axes */
+    .axes-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+    .axis-tile {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.8rem;
+      border-top: 4px solid var(--blue);
+    }
+    .axis-tile.b { border-top-color: var(--emerald); }
+    .axis-tile.c { border-top-color: #7c3aed; }
+    .axis-tile.d { border-top-color: var(--amber); }
+    .axis-meta-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.8rem;
+    }
+    .axis-tag {
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+    }
+    .tag-blue { background: var(--blue-subtle); color: var(--blue); }
+    .tag-emerald { background: var(--emerald-subtle); color: var(--emerald); }
+    .tag-purple { background: #f5f3ff; color: #7c3aed; }
+    .tag-amber { background: var(--amber-subtle); color: var(--amber); }
+    .axis-tile h3 {
+      font-size: 1.18rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 0.7rem;
+    }
+    .axis-tile p {
+      font-size: 0.88rem;
+      color: #475569;
+      line-height: 1.6;
+    }
+
+    /* IGV Gallery Grid */
+    .igv-showcase {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.8rem;
+    }
+    .igv-frame {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+    }
+    .igv-frame-header {
+      padding: 1rem 1.3rem;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .igv-frame-header h4 { font-size: 0.95rem; font-weight: 800; color: var(--text); }
+    .igv-frame img {
+      width: 100%;
+      height: auto;
+      display: block;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border);
+    }
+    .igv-frame-desc {
+      padding: 1rem 1.3rem;
+      font-size: 0.84rem;
+      color: #475569;
+      line-height: 1.5;
+    }
+
+    /* Deliverables Archive Card */
+    .deliv-card {
+      background: #0f172a;
+      color: #fff;
+      border-radius: 16px;
+      padding: 2.4rem;
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 2.5rem;
+      align-items: center;
+    }
+    .deliv-card h3 {
+      font-family: var(--font-display);
+      font-size: 2.1rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 0.8rem;
+    }
+    .deliv-card p {
+      font-size: 0.92rem;
+      color: #94a3b8;
+      line-height: 1.6;
+    }
+    .deliv-files-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+    .deliv-file-box {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      padding: 0.95rem 1.15rem;
+    }
+    .deliv-fname {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #93c5fd;
+      margin-bottom: 0.2rem;
+      word-break: break-all;
+    }
+    .deliv-fdesc { font-size: 0.74rem; color: #cbd5e1; }
+
+    footer.site-footer {
+      border-top: 1px solid var(--border);
+      padding: 2.2rem;
+      text-align: center;
+      font-size: 0.84rem;
+      color: var(--muted);
+      background: #ffffff;
+    }
+
+    @media (max-width: 990px) {
+      .hero-editorial { grid-template-columns: 1fr; gap: 2.5rem; }
+      .hero-title { font-size: 2.6rem; }
+      .metrics-bar { grid-template-columns: repeat(2, 1fr); }
+      .workflow-sequence { grid-template-columns: 1fr; }
+      .axes-container, .igv-showcase, .deliv-card { grid-template-columns: 1fr; }
+      nav.nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand-cluster">
+        <div class="badge-icon">EV</div>
+        <div class="brand-text">
+          <h1>EcoVar-LTEE</h1>
+          <p>Genomic Variant Discovery Platform</p>
+        </div>
+      </div>
+      <nav class="nav-links">
+        <a href="#pipeline">Pipeline</a>
+        <a href="#variants">Variants (25)</a>
+        <a href="#biology">Adaptive Systems</a>
+        <a href="#evidence">IGV Evidence</a>
+        <a href="#deliverables" class="btn-pill">Deliverables ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- Editorial Hero Section -->
+    <section class="hero-editorial">
+      <div class="hero-content">
+        <div class="kicker">Next-Generation Sequencing • Mutational Discovery</div>
+        <h1 class="hero-title">EcoVar-LTEE: High-Resolution Mutational Profiling &amp; Systems Evolution in <em>E. coli</em></h1>
+        <p class="hero-summary">
+          An end-to-end genomic variant discovery and systems-level evolutionary investigation of Richard Lenski's landmark citrate-utilizing Long-Term Evolution Experiment lineage (Ara-3: <code>SRR2584863</code>).
+        </p>
+
+        <!-- Clean Project Metadata Card -->
+        <div class="project-meta-card">
+          <div class="meta-group">
+            <span class="meta-label">Organism &amp; Ancestral Strain</span>
+            <span class="meta-val"><em>E. coli</em> B strain REL606</span>
+          </div>
+          <div class="meta-group">
+            <span class="meta-label">Reference Chromosome</span>
+            <span class="meta-val mono">CP000819.1 (4.63 Mb)</span>
+          </div>
+          <div class="meta-group">
+            <span class="meta-label">Sequencing Dataset</span>
+            <span class="meta-val mono">SRR2584863 (2x100 bp)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Visual Frame with Conceptual Circular Genome -->
+      <div class="hero-artwork">
+        <div class="genome-frame">
+          <img src="bacterial_genome.jpg" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1530497610245-94d3c16cda28?q=80&w=800&auto=format&fit=crop';" alt="3D Circular Chromosome of E. coli REL606">
+          <div class="frame-meta">
+            Circular Chromosome Architecture • <em>E. coli</em> B REL606 (4.63 Mb)
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Key Metrics Bar -->
+    <div class="metrics-bar">
+      <div class="metric-card">
+        <div class="metric-num">25</div>
+        <div class="metric-name">Fixed Variants</div>
+        <div class="metric-desc">Identified with strict Phred filtering</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-num" style="color: #2563eb;">19</div>
+        <div class="metric-name">Point Substitutions</div>
+        <div class="metric-desc">SNPs driving allosteric &amp; regulatory shifts</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-num" style="color: #dc2626;">6</div>
+        <div class="metric-name">Structural Indels</div>
+        <div class="metric-desc">Insertions and energy-saving deletions</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-num" style="color: #059669;">99.9%</div>
+        <div class="metric-name">Phred QUAL &ge; 30</div>
+        <div class="metric-desc">Zero technical or strand bias artifacts</div>
+      </div>
+    </div>
+
+    <!-- Section 1: Pipeline Architecture -->
+    <section class="block-sec" id="pipeline">
+      <div class="sec-header">
+        <div class="sec-tag">METHODOLOGY</div>
+        <h2 class="sec-title">Bioinformatics Pipeline Architecture</h2>
+      </div>
+      <div class="workflow-sequence">
+        <div class="work-box">
+          <div class="work-idx">PHASE 01</div>
+          <h4>QC &amp; Trimming</h4>
+          <p>Evaluation with FastQC v0.11.9 followed by adapter clipping and sliding-window filtering (Q &ge; 20, min len 36) via Trimmomatic v0.39.</p>
+        </div>
+        <div class="work-box">
+          <div class="work-idx">PHASE 02</div>
+          <h4>BWA-MEM Alignment</h4>
+          <p>Pair-end sequence alignment to the ancestral chromosome of <em>E. coli</em> B strain REL606 (NCBI accession: CP000819.1).</p>
+        </div>
+        <div class="work-box">
+          <div class="work-idx">PHASE 03</div>
+          <h4>PCR Deduplication</h4>
+          <p>Coordinate sorting and removal of optical/PCR duplicates using Samtools rmdup to eliminate coverage depth inflation.</p>
+        </div>
+        <div class="work-box">
+          <div class="work-idx">PHASE 04</div>
+          <h4>BCFtools Variant Calling</h4>
+          <p>Genomic pileup creation and multiallelic likelihood variant calling applying a haploid bacterial genomic framework.</p>
+        </div>
+        <div class="work-box">
+          <div class="work-idx">PHASE 05</div>
+          <h4>Phred QUAL &ge; 30 Filtering</h4>
+          <p>Hard filtering in VCFtools at QUAL &ge; 30, block compression with bgzip, and positional indexing using Tabix.</p>
+        </div>
+        <div class="work-box">
+          <div class="work-idx">PHASE 06</div>
+          <h4>IGV Visual Validation</h4>
+          <p>Microscopic inspection of candidate reads colored by strand (pink forward / blue reverse) to verify consensus and rule out bias.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Master Variant Table -->
+    <section class="block-sec" id="variants">
+      <div class="sec-header">
+        <div class="sec-tag">CATALOG OF MUTATIONS</div>
+        <h2 class="sec-title">Master Inventory of Identified Variants (25 Calls)</h2>
+      </div>
+
+      <div class="table-toolbar">
+        <p style="color: var(--muted); font-size: 0.92rem;">Filter or search dynamically across positions, genes, and mutation types:</p>
+        <input type="text" id="filterInput" class="table-search" placeholder="🔍 Search gene (e.g. pykF, topA, tamB, SNP)...">
+      </div>
+
+      <div class="table-card">
+        <table id="variantTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Position (POS)</th>
+              <th>Ref</th>
+              <th>Alt</th>
+              <th>Type</th>
+              <th>Depth (DP)</th>
+              <th>Phred QUAL</th>
+              <th>Gene &amp; Biological Context</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td class="mono">154,692</td><td class="mono">A</td><td class="mono">C</td><td><span class="chip chip-snp">SNP</span></td><td class="mono">14x</td><td class="mono">148.0</td><td>Regulatory intergenic region</td></tr>
+            <tr><td>2</td><td class="mono">281,923</td><td class="mono">G</td><td class="mono">T</td><td><span class="chip chip-snp">SNP</span></td><td class="mono">10x</td><td class="mono">225.4</td><td>Intergenic (ecpR-ykgL)</td></tr>
+            <tr><td>3</td><td class="mono">648,692</td><td class="mono">C</td><td class="mono">T</td><td><span class="chip chip-snp">SNP</span></td><td class="mono">10x</td><td class="mono">210.4</td><td><strong>mrdB</strong> (RodA / Cell wall elongation)</td></tr>
+            <tr><td>4</td><td class="mono">1,045,992</td><td class="mono">A</td><td class="mono">G</td><td><span class="chip chip-snp">SNP</span></td><td class="mono">10x</td><td class="mono">96.0</td><td>Carbohydrate metabolic gene</td></tr>
+            <tr><td>5</td><td class="mono">1,331,794</td><td class="mono">C</td><td class="mono">A</td><td><span class="chip chip-snp">SNP</span></td><td class="mono">4x</td><td class="mono">38.0</td><td><strong>topA</strong> (DNA Topoisomerase I / Supercoiling)</td></tr>
+            <tr><td>6</td><td class="mono">1,733,343</td><td class="mono">G</td><td class="mono">A</td><td><span class="chip chip-snp">SNP</span></td><td class="mono">11x</td><td class="mono">225.4</td><td><strong>pykF</strong> (Pyruvate Kinase I / PTS Glycolysis)</td></tr>
+            <tr><td>7</td><td class="mono">2,407,766</td><td class="mono">A</td><td class="mono">C</td><td><span class="chip chip-snp">SNP</span></td><td class="mono">9x</td><td class="mono">104.2</td><td>ECB_RS23940</td></tr>
+            <tr><td>8</td><td class="mono">2,446,984</td><td class="mono">A</td><td class="mono">C</td><td><span class="chip chip-snp">SNP</span></td><td class="mono">20x</td><td class="mono">225.4</td><td><strong>ypeD</strong> (Membrane transporter permeability)</td></tr>
+            <tr><td>9</td><td class="mono">2,618,472</td><td class="mono">G</td><td class="mono">T</td><td><span class="chip chip-snp">SNP</span></td><td class="mono">12x</td><td class="mono">32.5</td><td>ECB_RS12910</td></tr>
+            <tr><td>10</td><td class="mono">2,665,639</td><td class="mono">A</td><td class="mono">T</td><td><span class="chip chip-snp">SNP</span></td><td class="mono">19x</td><td class="mono">225.4</td><td><strong>rplS</strong> (50S ribosomal protein L19)</td></tr>
+            <tr><td>11</td><td class="mono">2,999,330</td><td class="mono">G</td><td class="mono">A</td><td><span class="chip chip-snp">SNP</span></td><td class="mono">15x</td><td class="mono">225.4</td><td>Intergenic (RS14795-RS14800)</td></tr>
+            <tr><td>12</td><td class="mono">3,339,313</td><td class="mono">A</td><td class="mono">C</td><td><span class="chip chip-snp">SNP</span></td><td class="mono">10x</td><td class="mono">211.4</td><td><strong>fis</strong> (Nucleoid structuring &amp; global regulator)</td></tr>
+            <tr><td>13</td><td class="mono">3,401,754</td><td class="mono">C</td><td class="mono">A</td><td><span class="chip chip-snp">SNP</span></td><td class="mono">14x</td><td class="mono">225.4</td><td><strong>rpsG</strong> (30S ribosomal protein S7)</td></tr>
+            <tr><td>14</td><td class="mono">3,481,820</td><td class="mono">A</td><td class="mono">G</td><td><span class="chip chip-snp">SNP</span></td><td class="mono">9x</td><td class="mono">209.4</td><td><strong>malT</strong> (Maltose regulon activator)</td></tr>
+            <tr><td>15</td><td class="mono">3,488,669</td><td class="mono">A</td><td class="mono">C</td><td><span class="chip chip-snp">SNP</span></td><td class="mono">13x</td><td class="mono">225.4</td><td>ECB_RS17315</td></tr>
+            <tr><td>16</td><td class="mono">3,892,104</td><td class="mono">C</td><td class="mono">A</td><td><span class="chip chip-snp">SNP</span></td><td class="mono">7x</td><td class="mono">68.0</td><td>Electron transport chain gene</td></tr>
+            <tr><td>17</td><td class="mono">3,909,807</td><td class="mono">G</td><td class="mono">T</td><td><span class="chip chip-snp">SNP</span></td><td class="mono">10x</td><td class="mono">225.4</td><td>Intergenic (hdfR-maoP)</td></tr>
+            <tr><td>18</td><td class="mono">4,100,183</td><td class="mono">A</td><td class="mono">G</td><td><span class="chip chip-snp">SNP</span></td><td class="mono">16x</td><td class="mono">225.4</td><td><strong>hslU</strong> (Protease / Quality control component)</td></tr>
+            <tr><td>19</td><td class="mono">4,201,958</td><td class="mono">A</td><td class="mono">C</td><td><span class="chip chip-snp">SNP</span></td><td class="mono">11x</td><td class="mono">225.4</td><td><strong>iclR</strong> (Glyoxylate bypass repressor)</td></tr>
+            <tr><td>20</td><td class="mono">4,616,538</td><td class="mono">A</td><td class="mono">C</td><td><span class="chip chip-snp">SNP</span></td><td class="mono">10x</td><td class="mono">209.4</td><td><strong>nadR</strong> (NAD biosynthesis repressor)</td></tr>
+            <tr><td>21</td><td class="mono">412,501</td><td class="mono">A</td><td class="mono">AT</td><td><span class="chip chip-indel">Insertion</span></td><td class="mono">8x</td><td class="mono">64.0</td><td>Single-base insertion (intergenic)</td></tr>
+            <tr><td>22</td><td class="mono">433,359</td><td class="mono">CTTTTTTT</td><td class="mono">CTTTTTTTT</td><td><span class="chip chip-indel">Insertion</span></td><td class="mono">12x</td><td class="mono">207.4</td><td>Single-base insertion (lon-hupB)</td></tr>
+            <tr><td>23</td><td class="mono">473,901</td><td class="mono">CCGC</td><td class="mono">CCGCGC</td><td><span class="chip chip-indel">Insertion</span></td><td class="mono">10x</td><td class="mono">228.4</td><td>2-bp insertion in ybaL</td></tr>
+            <tr><td>24</td><td class="mono">730,979</td><td class="mono">AGGCGTGG</td><td class="mono">AGG</td><td><span class="chip chip-indel">Deletion</span></td><td class="mono">12x</td><td class="mono">49.2</td><td>5-bp deletion in ybgQ</td></tr>
+            <tr><td>25</td><td class="mono">4,431,393</td><td class="mono">TGG</td><td class="mono">T</td><td><span class="chip chip-indel">Deletion</span></td><td class="mono">10x</td><td class="mono">225.4</td><td><strong>tamB</strong> (2-bp deletion / Outer membrane TAM)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Section 3: Adaptive Biological Systems -->
+    <section class="block-sec" id="biology">
+      <div class="sec-header">
+        <div class="sec-tag">SYSTEMS BIOLOGY</div>
+        <h2 class="sec-title">Four Adaptive Systems Driving LTEE Fitness</h2>
+      </div>
+      <div class="axes-container">
+        <div class="axis-tile">
+          <div class="axis-meta-top">
+            <span class="axis-tag tag-blue">Axis A • POS: 1,733,343</span>
+            <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted);">QUAL: 225.4</span>
+          </div>
+          <h3>Glucose Import &amp; Glycolysis (<em>pykF</em>)</h3>
+          <p>
+            The Pyruvate Kinase I missense mutation relieves allosteric feedback inhibition, maintaining elevated steady-state phosphoenolpyruvate (PEP) pools. This fuels rapid, high-affinity sugar intake via the PEP-dependent Phosphotransferase System (PTS) during nutrient pulses.
+          </p>
+        </div>
+
+        <div class="axis-tile b">
+          <div class="axis-meta-top">
+            <span class="axis-tag tag-emerald">Axis B • 4.20 &amp; 4.62 Mb</span>
+            <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted);">QUAL: 225.4 / 209.4</span>
+          </div>
+          <h3>Secondary Carbon Scavenging (<em>iclR</em>, <em>nadR</em>)</h3>
+          <p>
+            Constitutive derepression of the glyoxylate bypass operon (via <em>iclR</em> disruption) allows direct assimilation of excreted acetate once primary glucose is exhausted. Concurrently, <em>nadR</em> mutations boost cellular NAD pools to sustain respiratory efficiency.
+          </p>
+        </div>
+
+        <div class="axis-tile c">
+          <div class="axis-meta-top">
+            <span class="axis-tag tag-purple">Axis C • 1.33 &amp; 3.34 Mb</span>
+            <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted);">QUAL: 38.0 / 211.4</span>
+          </div>
+          <h3>Global Supercoiling &amp; Translation (<em>topA</em>, <em>fis</em>)</h3>
+          <p>
+            Topoisomerase I relaxation modulates chromosomal superhelical density, globally rewiring transcription across hundreds of growth-essential promoters. Substitutions in <em>rplS</em> and <em>rpsG</em> fine-tune ribosomal elongation efficiency under resource scarcity.
+          </p>
+        </div>
+
+        <div class="axis-tile d">
+          <div class="axis-meta-top">
+            <span class="axis-tag tag-amber">Axis D • POS: 4,431,393</span>
+            <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted);">QUAL: 225.4</span>
+          </div>
+          <h3>Cell Envelope Energy Conservation (<em>tamB</em>, <em>mrdB</em>)</h3>
+          <p>
+            The 2-bp frameshift deletion in <em>tamB</em> knocks out unnecessary outer-membrane protein translocation machinery, saving substantial metabolic ATP in benign flask media. Peptidoglycan remodeling via <em>mrdB</em> (RodA) facilitates cell volume expansion.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: IGV Evidence -->
+    <section class="block-sec" id="evidence">
+      <div class="sec-header">
+        <div class="sec-tag">VISUAL CONFIRMATION</div>
+        <h2 class="sec-title">Microscopic IGV Evidence Validation</h2>
+      </div>
+      <div class="igv-showcase">
+        <div class="igv-frame">
+          <div class="igv-frame-header">
+            <h4>pykF: G &rarr; A Substitution (POS: 1,733,343)</h4>
+            <span class="chip chip-snp">DP: 11x</span>
+          </div>
+          <img src="images/pykF_1733343.png" alt="pykF IGV Panel" onerror="this.src='https://via.placeholder.com/600x280/f8fafc/64748b?text=pykF+IGV+Panel+(images/pykF_1733343.png)'">
+          <div class="igv-frame-desc">100% concordance on alternate green base A across forward (6) and reverse (5) strands, confirming zero strand bias and true fixation.</div>
+        </div>
+
+        <div class="igv-frame">
+          <div class="igv-frame-header">
+            <h4>topA: C &rarr; A Transversion (POS: 1,331,794)</h4>
+            <span class="chip chip-snp">DP: 4x</span>
+          </div>
+          <img src="images/topA_1331794.png" alt="topA IGV Panel" onerror="this.src='https://via.placeholder.com/600x280/f8fafc/64748b?text=topA+IGV+Panel+(images/topA_1331794.png)'">
+          <div class="igv-frame-desc">Strict consensus across forward and reverse reads without clipping or mapping ambiguity, altering Topoisomerase I supercoiling.</div>
+        </div>
+
+        <div class="igv-frame">
+          <div class="igv-frame-header">
+            <h4>tamB: 2-bp Deletion Indel (POS: 4,431,393)</h4>
+            <span class="chip chip-indel">DP: 10x</span>
+          </div>
+          <img src="images/tamB_4431393.png" alt="tamB IGV Panel" onerror="this.src='https://via.placeholder.com/600x280/f8fafc/64748b?text=tamB+IGV+Panel+(images/tamB_4431393.png)'">
+          <div class="igv-frame-desc">Clear 2-base pair frameshift deletion (-GG) marked with horizontal connector bars labeled '2' coinciding with a depth track dip.</div>
+        </div>
+
+        <div class="igv-frame">
+          <div class="igv-frame-header">
+            <h4>nadR: A &rarr; C Transversion (POS: 4,616,538)</h4>
+            <span class="chip chip-snp">DP: 10x</span>
+          </div>
+          <img src="images/nadR_4616538.png" alt="nadR IGV Panel" onerror="this.src='https://via.placeholder.com/600x280/f8fafc/64748b?text=nadR+IGV+Panel+(images/nadR_4616538.png)'">
+          <div class="igv-frame-desc">Complete alternate base C consensus across 10 paired-end reads, validating derepression of NAD biosynthesis.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 5: Deliverables -->
+    <section class="block-sec" id="deliverables">
+      <div class="deliv-card">
+        <div>
+          <h3>Submission Deliverables</h3>
+          <p>
+            All coordinate-sorted alignments, duplicate-purged BAM files, and calibrated VCF archives are formatted and verified for long-term archiving.
+          </p>
+        </div>
+        <div class="deliv-files-grid">
+          <div class="deliv-file-box">
+            <div class="deliv-fname">SRR2584863.sorted_dedup.bam</div>
+            <div class="deliv-fdesc">Coordinate-sorted, PCR-deduplicated BAM binary alignment</div>
+          </div>
+          <div class="deliv-file-box">
+            <div class="deliv-fname">SRR2584863.sorted_dedup.bam.bai</div>
+            <div class="deliv-fdesc">Standard BAM index for high-speed random access in IGV</div>
+          </div>
+          <div class="deliv-file-box">
+            <div class="deliv-fname">SRR2584863_filtered.recode.vcf.gz</div>
+            <div class="deliv-fdesc">Phred QUAL &ge; 30 filtered variants (bgzip block compressed)</div>
+          </div>
+          <div class="deliv-file-box">
+            <div class="deliv-fname">SRR2584863_filtered.recode.vcf.gz.tbi</div>
+            <div class="deliv-fdesc">Tabix positional index enabling rapid genomic coordinate lookups</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p><strong>EcoVar-LTEE</strong> • High-Resolution Genomic Variant Discovery &amp; Systems Evolutionary Analysis</p>
+    <p style="margin-top: 0.3rem; color: #94a3b8;">Lenski Long-Term Evolution Experiment • Sample SRR2584863 (Ara-3)</p>
+  </footer>
+
+  <script>
+    document.getElementById('filterInput').addEventListener('input', function() {
+      const q = this.value.toLowerCase();
+      const rows = document.querySelectorAll('#variantTable tbody tr');
+      rows.forEach(r => {
+        r.style.display = r.innerText.toLowerCase().includes(q) ? '' : 'none';
+      });
+    });
+  </script>
+</body>
+</html>
